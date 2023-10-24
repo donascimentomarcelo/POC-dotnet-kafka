@@ -1,2 +1,3 @@
 bin/*
 obj/*
+/POC-dotnet-kafka.sln
