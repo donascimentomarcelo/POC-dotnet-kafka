@@ -5,7 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Confluent.Kafka;
+using Confluent.SchemaRegistry.Serdes;
+using Confluent.SchemaRegistry;
 using POC_dotnet_kafka.Models;
+using System.IO;
+using CsvHelper;
+using CsvHelper.Configuration;
+using System.Globalization;
 
 namespace POC_dotnet_kafka.Controllers
 {
@@ -22,24 +28,23 @@ namespace POC_dotnet_kafka.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] AvroDTO dto)
         {
-
-            var producerConfig = new ProducerConfig
+            using (var reader = new StreamReader(@"Data/data.csv"))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
             {
-                BootstrapServers = "localhost:9092"
-            };
+                var records = csv.GetRecords<User>();
 
-            // var producer = new ProducerBuilder<Null, string>(producerConfig).build();
-
-            // while (true)
-            // {
-            //     var userName = Faker.Name.FristName();
-
-            //     Console.WriteLine(userName);
-
-            //     producer.Producer("")
-            // }
-
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"Name: {record.name}, Age: {record.age}");
+                }
+            }
             return Ok(dto);
         }
     }
+}
+
+public class User
+{
+    public string name { get; set; }
+    public int age { get; set; }
 }
