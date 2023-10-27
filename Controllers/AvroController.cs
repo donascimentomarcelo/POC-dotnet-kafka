@@ -12,6 +12,7 @@ using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
+using Avro.Models;
 
 namespace POC_dotnet_kafka.Controllers
 {
@@ -31,11 +32,11 @@ namespace POC_dotnet_kafka.Controllers
             using (var reader = new StreamReader(@"Data/data.csv"))
             using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
             {
-                var records = csv.GetRecords<User>();
+                var records = csv.GetRecords<Account>();
 
                 foreach (var record in records)
                 {
-                    Console.WriteLine($"Name: {record.name}, Age: {record.age}");
+                    Console.WriteLine($"Name: {record.Number}, Age: {record.Balance}");
                 }
             }
             return Ok(dto);
